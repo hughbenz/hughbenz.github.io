@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Football Data Pipeline</title>
+<link rel="stylesheet" href="../assets/glass.css">
+<link rel="stylesheet" href="../assets/docs.css">
+</head><body>
+<script src="../assets/site.js" data-root="../" data-page="data-pipeline" data-nav="{&quot;mode&quot;: &quot;sections&quot;, &quot;sel&quot;: &quot;.doc .step&quot;, &quot;overview&quot;: &quot;.fa-main&quot;}"></script>
+<div class="fa-shell"><div class="fa-side" id="fa-side" role="navigation" aria-label="On this page"></div><div class="fa-main">
+<article class="doc">
+<header class="doc-head">
+<p class="eyebrow">Process overview</p>
+<h1>Football Data Pipeline</h1>
+<p class="subtitle">From the Sportmonks API to a browsable HTML dashboard</p>
+</header>
+<ol class="steps">
+<li class="step" data-fa-label="Design the schema"><span class="no">01</span><div class="card"><h3>Design the schema</h3><p>Designed a PostgreSQL schema based on the data available from the Sportmonks API endpoints.</p></div></li>
+<li class="step" data-fa-label="Create the database"><span class="no">02</span><div class="card"><h3>Create the database</h3><p>Created a PostgreSQL database named <code>football</code>.</p></div></li>
+<li class="step" data-fa-label="Load the data"><span class="no">03</span><div class="card"><h3>Load the data</h3><p>Wrote a Python script to load data league by league into the database via API requests.</p></div></li>
+<li class="step" data-fa-label="Validate"><span class="no">04</span><div class="card"><h3>Validate</h3><p>Checked data integrity and normalisation with SQL queries.</p></div></li>
+<li class="step" data-fa-label="Analyse"><span class="no">05</span><div class="card"><h3>Analyse</h3><p>Wrote Python scripts to analyse the data from specific angles.</p></div></li>
+<li class="step" data-fa-label="Build the dashboard"><span class="no">06</span><div class="card"><h3>Build the dashboard</h3><p>Used Claude to help extend the scripts so their output renders as an HTML dashboard.</p></div></li>
+<li class="step" data-fa-label="Combine"><span class="no">07</span><div class="card"><h3>Combine</h3><p>Used Claude to concatenate everything into a single browsable file.</p></div></li>
+</ol>
+<div class="chips"><span>PostgreSQL</span><span>Python</span><span>Sportmonks API</span><span>HTML</span></div>
+<a class="pdf-link" href="pdf/football-data-pipeline.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download the original PDF</a>
+</article>
+
+</div></div>
+</body></html>

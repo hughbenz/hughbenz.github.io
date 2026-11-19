@@ -1,0 +1,195 @@
+/*
+VOICE: a club analytics suite seen through glass: calm, precise, data-first.
+IDEA: liquid-glass panels floating over a floodlit, mown match pitch.
+PICTURE: the pitch itself (fixed, textured, chalk-lined) behind every page.
+COLOUR and TYPE: grass greens + chalk white; section accents yellow card, grass, sky. Barlow Condensed + Barlow for the shell; dashboards keep their own type.
+LAYOUT: glass header, sticky glass section browser on the left, frosted content sheet on the right.
+*/
+
+/* ---------- tokens ---------- */
+:root{
+  --fa-sheet:rgba(238,246,241,.78);
+  --fa-glass:rgba(255,255,255,.52);
+  --fa-glass-hi:rgba(255,255,255,.80);
+  --fa-field:rgba(255,255,255,.62);
+  --fa-th:rgba(240,247,243,.96);
+  --fa-tip:rgba(250,253,251,.90);
+  --fa-edge:rgba(255,255,255,.72);
+  --fa-edge-lo:rgba(255,255,255,.22);
+  --fa-hair:rgba(18,52,32,.13);
+  --fa-ink:#0f1d15;--fa-ink2:#33423a;--fa-muted:#56645b;
+  --fa-lens:rgba(255,255,255,.92);
+  --fa-lens-ink:#0f1d15;
+  --fa-focus:#1d7a4a;
+  --fa-sheen:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,0) 46%);
+  --fa-shadow:0 1px 1px rgba(0,30,12,.05),0 12px 32px rgba(0,40,16,.13);
+  --fa-inset:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18);
+  --fa-night:rgba(236,243,238,.62);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --fa-sheet:rgba(7,15,11,.74);
+  --fa-glass:rgba(32,48,40,.46);
+  --fa-glass-hi:rgba(40,58,49,.72);
+  --fa-field:rgba(255,255,255,.07);
+  --fa-th:rgba(17,27,22,.97);
+  --fa-tip:rgba(16,25,20,.92);
+  --fa-edge:rgba(255,255,255,.17);
+  --fa-edge-lo:rgba(255,255,255,.06);
+  --fa-hair:rgba(255,255,255,.10);
+  --fa-ink:#ecf2ee;--fa-ink2:#c4cfc8;--fa-muted:#9aa9a0;
+  --fa-lens:rgba(255,255,255,.16);
+  --fa-lens-ink:#ffffff;
+  --fa-focus:#7fe0a8;
+  --fa-sheen:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 46%);
+  --fa-shadow:0 1px 1px rgba(0,0,0,.2),0 14px 36px rgba(0,0,0,.35);
+  --fa-inset:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(255,255,255,.04);
+  --fa-night:rgba(20,27,23,.72);
+}}
+:root[data-theme="dark"]{
+  --fa-sheet:rgba(7,15,11,.74);
+  --fa-glass:rgba(32,48,40,.46);
+  --fa-glass-hi:rgba(40,58,49,.72);
+  --fa-field:rgba(255,255,255,.07);
+  --fa-th:rgba(17,27,22,.97);
+  --fa-tip:rgba(16,25,20,.92);
+  --fa-edge:rgba(255,255,255,.17);
+  --fa-edge-lo:rgba(255,255,255,.06);
+  --fa-hair:rgba(255,255,255,.10);
+  --fa-ink:#ecf2ee;--fa-ink2:#c4cfc8;--fa-muted:#9aa9a0;
+  --fa-lens:rgba(255,255,255,.16);
+  --fa-lens-ink:#ffffff;
+  --fa-focus:#7fe0a8;
+  --fa-sheen:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 46%);
+  --fa-shadow:0 1px 1px rgba(0,0,0,.2),0 14px 36px rgba(0,0,0,.35);
+  --fa-inset:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(255,255,255,.04);
+  --fa-night:rgba(20,27,23,.72);
+}
+
+/* ---------- the pitch ---------- */
+html{background:linear-gradient(var(--fa-night),var(--fa-night)) fixed,url(pitch.jpg) center/cover no-repeat fixed #1d5c33!important}
+body{background:transparent!important}
+
+/* ---------- dashboard palettes retuned for glass (solid values: charts use them as halos) ---------- */
+.viz-root{--surface:#eef5f0!important;--raise:#f8fbf9!important;--page:rgba(255,255,255,.5)!important;--ink2:#33423a!important;--muted:#56645b!important;
+  --grid:rgba(18,52,32,.12)!important;--ring:rgba(255,255,255,.66)!important;--shadow:var(--fa-shadow)!important;background:transparent!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .viz-root{--surface:#16211b!important;--raise:#1d2a23!important;--page:rgba(255,255,255,.06)!important;
+  --ink2:#c4cfc8!important;--muted:#9aa9a0!important;--grid:rgba(255,255,255,.09)!important;--ring:rgba(255,255,255,.14)!important}}
+:root[data-theme="dark"] .viz-root{--surface:#16211b!important;--raise:#1d2a23!important;--page:rgba(255,255,255,.06)!important;
+  --ink2:#c4cfc8!important;--muted:#9aa9a0!important;--grid:rgba(255,255,255,.09)!important;--ring:rgba(255,255,255,.14)!important}
+
+:root{--card:#eef5f0!important;--line:rgba(18,52,32,.14)!important;--muted:#56645b!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#16211b!important;--line:rgba(255,255,255,.12)!important;--grid:rgba(255,255,255,.07)!important;--muted:#9aa9a0!important}}
+
+/* unified models: its own sidebar is replaced by the shared one */
+.viz-root nav.side{display:none!important}
+.viz-root .shell{grid-template-columns:minmax(0,1fr)!important;max-width:none!important}
+
+/* ---------- shell: section browser + frosted sheet ---------- */
+.fa-shell{display:grid;grid-template-columns:236px minmax(0,1fr);gap:18px;max-width:1660px;margin:0 auto;padding:0 clamp(10px,1.6vw,22px) 28px;align-items:start}
+.fa-main{position:relative;isolation:isolate;min-width:0;border-radius:26px}
+.fa-main::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--fa-sheen),var(--fa-sheet);
+  -webkit-backdrop-filter:blur(22px) saturate(1.45);backdrop-filter:blur(22px) saturate(1.45);
+  border:1px solid var(--fa-edge);box-shadow:var(--fa-inset),var(--fa-shadow)}
+@media (max-width:980px){.fa-shell{grid-template-columns:minmax(0,1fr)}.fa-side{display:none!important}.fa-main{border-radius:20px}}
+
+.fa-side{position:sticky;top:14px;height:calc(100vh - 28px);font:13px/1.4 Barlow,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--fa-ink)}
+.fa-side-in{height:100%;overflow:auto;padding:22px 10px 18px 14px;border-radius:22px;background:var(--fa-sheen),var(--fa-glass);
+  -webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--fa-edge);box-shadow:var(--fa-inset),var(--fa-shadow);scrollbar-width:thin}
+.fa-side .brand{font-weight:650;font-size:13px;margin:0 0 14px 9px;color:var(--fa-ink2);letter-spacing:.02em;text-transform:uppercase}
+.fa-side a{display:flex;gap:9px;align-items:center;color:var(--fa-ink2);text-decoration:none;padding:7px 10px;border-radius:11px;font-size:14px;margin:1px 0;min-height:34px;transition:background .2s,box-shadow .2s}
+.fa-side a .n{font-variant-numeric:tabular-nums;color:var(--fa-muted);font-size:11px;width:16px;flex:none}
+.fa-side a .t{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fa-side a:hover{background:var(--fa-field)}
+.fa-side a.on{background:var(--fa-lens);color:var(--fa-lens-ink);font-weight:600;box-shadow:var(--fa-inset),0 2px 8px rgba(0,30,12,.12)}
+.fa-side a.sub{padding-left:35px;font-size:13px;min-height:30px}
+.fa-side a.sub.on{background:var(--fa-field);box-shadow:none;font-weight:600}
+.fa-side a:focus-visible{outline:2px solid var(--fa-focus);outline-offset:1px}
+.fa-side .foot{margin:18px 9px 0;padding-top:12px;border-top:1px solid var(--fa-hair);font-size:12px;color:var(--fa-muted);display:grid;gap:2px}
+.fa-side .foot a{font-size:13px;padding:6px 9px;margin:0 -9px;min-height:30px}
+.fa-side .foot span{font-size:11px;margin-top:6px}
+
+/* ---------- panels become glass ---------- */
+.fa-main .card,.fa-main .kpi,.fa-main .map,.fa-main .stat,.fa-main .controls,.viz-root .bar{
+  background:var(--fa-sheen),var(--fa-glass)!important;border:1px solid var(--fa-edge)!important;box-shadow:var(--fa-inset),0 1px 2px rgba(0,30,12,.05),0 8px 22px rgba(0,30,12,.08)!important}
+.fa-main .card,.fa-main .map{border-radius:18px!important}
+.fa-main .kpi,.fa-main .stat{border-radius:14px!important}
+.fa-main .card .card,.fa-main .card .kpi,.fa-main .card .stat{box-shadow:var(--fa-inset)!important}
+/* sticky control bars float over content: give them real blur */
+.fa-main .controls,.viz-root .bar{-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);background:var(--fa-sheen),var(--fa-glass-hi)!important;border-radius:16px!important}
+.fa-main .controls[style*="static"]{background:var(--fa-field)!important;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:var(--fa-inset)!important}
+.fa-main .hero{border-radius:20px!important}
+
+/* filter rows on the simpler dashboards */
+.fa-main > .bar{margin:6px clamp(10px,1.5vw,20px) 12px;border:1px solid var(--fa-edge)!important;border-radius:16px;background:var(--fa-sheen),var(--fa-glass);box-shadow:var(--fa-inset);padding:10px 16px!important}
+.fa-main > .bar + .bar.filters{margin-top:-4px;padding-top:10px!important}
+
+/* segmented tabs = liquid glass switch */
+.fa-main .tabs{display:flex;width:max-content;max-width:calc(100% - 28px);overflow-x:auto;gap:3px;padding:4px!important;border-radius:15px;border:1px solid var(--fa-edge)!important;
+  background:var(--fa-field)!important;box-shadow:var(--fa-inset);scrollbar-width:none}
+.fa-main > .tabs{margin:4px clamp(10px,1.5vw,20px) 6px}
+.fa-main .tabs button{border:0!important;border-radius:11px!important;padding:8px 14px!important;background:transparent!important;color:var(--fa-ink2)!important;white-space:nowrap;transition:background .2s,box-shadow .2s}
+.fa-main .tabs button:hover{background:var(--fa-field)!important}
+.fa-main .tabs button.on{background:var(--fa-lens)!important;color:var(--fa-lens-ink)!important;font-weight:600;box-shadow:var(--fa-inset),0 2px 8px rgba(0,30,12,.14)!important}
+
+/* fields */
+.fa-main select,.fa-main input[type=search],.fa-main input[type=text],.fa-main input[type=number],.fa-main input:not([type]){
+  background:var(--fa-field)!important;border:1px solid var(--fa-edge)!important;border-radius:11px!important;box-shadow:var(--fa-inset)}
+.fa-main select:focus-visible,.fa-main input:focus-visible,.fa-main button:focus-visible{outline:2px solid var(--fa-focus);outline-offset:1px}
+.fa-main .seg{border-radius:12px!important;border-color:var(--fa-edge)!important;box-shadow:var(--fa-inset)}
+.fa-main .seg button.on{border-radius:9px}
+
+/* tables */
+.fa-main th{background:var(--fa-th)!important}
+.fa-main td,.fa-main th{border-bottom-color:var(--fa-hair)!important}
+[data-fa-paged]{max-height:none!important}
+
+/* tooltips */
+.fa-main .tip,.fa-main #tip{background:var(--fa-tip)!important;border:1px solid var(--fa-edge)!important;border-radius:12px!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);box-shadow:var(--fa-inset),0 10px 28px rgba(0,20,8,.22)!important}
+
+/* :root-style dashboards: their page header sits on the sheet */
+.fa-main > header{padding-top:24px!important}
+.fa-main > main{padding-bottom:30px}
+
+/* ---------- pagination ---------- */
+.fa-pager,.fa-main .pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font:13px/1.3 Barlow,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--fa-ink2)}
+.fa-pager button,.fa-main .pager button{font:600 13px/1 Barlow,system-ui,sans-serif!important;min-width:34px;height:34px;padding:0 10px!important;border-radius:11px!important;
+  border:1px solid var(--fa-edge)!important;background:var(--fa-field)!important;color:var(--fa-ink)!important;box-shadow:var(--fa-inset);cursor:pointer}
+.fa-pager button:hover:not(:disabled),.fa-main .pager button:hover{background:var(--fa-glass-hi)!important}
+.fa-pager button.on{background:var(--fa-lens)!important;color:var(--fa-lens-ink)!important;box-shadow:var(--fa-inset),0 2px 8px rgba(0,30,12,.16)}
+.fa-pager button:disabled{opacity:.4;cursor:default}
+.fa-pager .gap{padding:0 2px;color:var(--fa-muted)}
+.fa-pager .info{margin-left:6px;color:var(--fa-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fa-pager label{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:6px;margin-left:auto;color:var(--fa-muted);font-size:12.5px!important}
+.fa-pager select{padding:5px 8px!important;font:13px Barlow,system-ui,sans-serif!important;color:var(--fa-ink)!important}
+
+/* referee impact: pointer to the explorer's new page */
+.fa-moved{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:30px 0 10px;padding:14px 18px;border-radius:16px;
+  background:var(--fa-sheen),var(--fa-glass);border:1px solid var(--fa-edge);box-shadow:var(--fa-inset);font-size:14px}
+.fa-moved a{font-weight:600;color:inherit}
+
+@media (prefers-reduced-motion:reduce){.fa-side a,.fa-main .tabs button{transition:none}html{scroll-behavior:auto!important}}
+
+/* ---------- foul maps: one map per screen ---------- */
+.fa-main .maps{grid-template-columns:minmax(0,1fr)!important;gap:22px!important}
+.fa-main .map{padding:18px 22px 16px!important}
+.fa-main .map h3{font-size:18px!important}
+.fa-main .map svg{max-height:calc(100vh - 190px);margin:6px auto 0}
+
+/* ---------- dropdowns: solid, readable option lists in both themes ---------- */
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="light"]{color-scheme:light}
+.fa-main select{color:var(--fa-ink)!important}
+.fa-main select option,.fa-main select optgroup{background-color:#f4f8f5;color:#0f1d15}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fa-main select option,:root:not([data-theme="light"]) .fa-main select optgroup{background-color:#18231d;color:#ecf2ee}}
+:root[data-theme="dark"] .fa-main select option,:root[data-theme="dark"] .fa-main select optgroup{background-color:#18231d;color:#ecf2ee}
+.fa-pager select option{background-color:#f4f8f5;color:#0f1d15}
+:root[data-theme="dark"] .fa-pager select option{background-color:#18231d;color:#ecf2ee}
+
+/* :root-style dashboards follow the site theme switch too */
+:root[data-theme="dark"]{--card:#16211b!important;--line:rgba(255,255,255,.12)!important;--grid:rgba(255,255,255,.07)!important;--muted:#9aa9a0!important}
+
+/* the site-wide theme switch replaces each dashboard's own button */
+.fa-main #theme{display:none!important}

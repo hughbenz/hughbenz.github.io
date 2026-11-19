@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Football database architecture</title>
+<link rel="stylesheet" href="../assets/glass.css">
+<link rel="stylesheet" href="../assets/docs.css">
+</head><body>
+<script src="../assets/site.js" data-root="../" data-page="database-architecture" data-nav="{&quot;mode&quot;: &quot;sections&quot;, &quot;sel&quot;: &quot;.doc &gt; section&quot;, &quot;label&quot;: &quot;h2&quot;}"></script>
+<div class="fa-shell"><div class="fa-side" id="fa-side" role="navigation" aria-label="On this page"></div><div class="fa-main">
+<article class="doc">
+<header class="doc-head">
+<h1>Football database architecture</h1>
+<p class="subtitle">Sportmonks Football API v3 into PostgreSQL 14+, five schemas</p>
+</header>
+
+<section class="card" data-fa-label="Overview diagram">
+<div class="arch" role="img" aria-label="Data flows from Sportmonks API v3 into raw, then core, football and odds, then analysis views">
+  <div class="node api">Sportmonks API v3</div>
+  <div class="arrow"></div>
+  <div class="node raw"><b>raw: landing zone</b><small>api_responses, sync_state, relationships</small></div>
+  <div class="arrow"></div>
+  <div class="mid">
+    <div class="node side"><b>core</b><span>types</span><span>states</span><span>continents</span><span>countries</span><span>regions, cities</span></div>
+    <div class="node fb"><b>football</b>
+      <div class="pair">
+        <div class="node"><b>Competition</b><small>leagues to rounds</small></div>
+        <div class="node"><b>Teams and people</b><small>players, coaches, refs</small></div>
+      </div>
+      <div class="down"><i></i><i></i></div>
+      <div class="node hub"><b>fixtures (hub)</b><small>events, lineups, stats, officials, xG</small></div>
+      <div class="pair">
+        <div class="node"><b>Season stats</b><small>standings, topscorers</small></div>
+        <div class="node"><b>Movement</b><small>transfers, sidelined</small></div>
+      </div>
+    </div>
+    <div class="node side"><b>odds</b><span>bookmakers</span><span>markets</span><span>prematch</span><span>inplay</span><span>premium</span><span>odds history</span></div>
+  </div>
+  <div class="arrow" style="margin-top:10px"></div>
+  <div class="node an"><b>analysis: views</b><small>match stats, referee discipline</small></div>
+</div>
+<p class="note" style="margin-top:18px">Data flows from the API into <b>raw</b>, is loaded into <b>core</b>, <b>football</b> and <b>odds</b>, and is summarised in <b>analysis</b>. <code>football.fixtures</code> is the hub: almost every match-level table and every odds table refers to it by <code>fixture_id</code>.</p>
+</section>
+
+<section class="card" style="--acc:#2fb873">
+<h2>Design rules</h2>
+<ul class="rules">
+<li><b>Common IDs.</b> Every primary key is the Sportmonks ID named <code>&lt;entity&gt;_id</code>, with the same name in every table that refers to it. Sportmonks' "participant" is always <code>team_id</code>; double references are prefixed (<code>home_team_id</code>, <code>from_team_id</code>, <code>related_player_id</code>).</li>
+<li><b>One lookup for codes.</b> Every coded value (event, statistic, position, official role, lineup type) is a <code>type_id</code> into <code>core.types</code>. Filter on the stable <code>developer_name</code>, e.g. <code>'YELLOWCARD'</code>, <code>'FOULS'</code>.</li>
+<li><b>Fixture context on child rows.</b> Match-level tables carry <code>league_id</code> and <code>season_id</code>, filled by trigger from the fixture, so most queries skip the join.</li>
+<li><b>JSON statistics with a numeric column.</b> Original stat objects stay in <code>data</code>; a generated <code>value</code> column (<code>core.jnum</code>) can be summed or averaged directly. Odds get <code>decimal_odds</code> and <code>probability_pct</code> the same way.</li>
+<li><b>Rebuildable.</b> Raw API payloads can be kept in <code>raw.api_responses</code> so tables can be rebuilt without re-downloading.</li>
+<li><b>Relationship map.</b> <code>raw.relationships</code> lists every reference. It creates all foreign keys and indexes, and <code>raw.missing_references()</code> lists IDs still to fetch.</li>
+</ul>
+</section>
+
+<section class="card">
+<h2>Schemas and tables</h2>
+<div class="scroll"><table>
+<thead><tr><th>Schema / area</th><th>Tables</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>raw</td><td>api_responses, sync_state, relationships</td><td>Landing zone for API payloads, incremental sync bookkeeping, and the reference map that drives keys and indexes.</td></tr>
+<tr><td>core</td><td>continents, countries, regions, cities, types, states</td><td>Geography, every coded value (types) and fixture states (NS, FT, AET, FT_PEN ...).</td></tr>
+<tr><td>football: competition</td><td>leagues, seasons, stages, rounds, groups, aggregates</td><td>Competition structure down to matchday, groups and two-legged ties.</td></tr>
+<tr><td>football: teams and people</td><td>venues, teams, players, coaches, referees, tv_stations, rivals, trophies, team_trophies, rankings</td><td>The entities that take part in or surround matches.</td></tr>
+<tr><td>football: movement</td><td>team_squads, coach_teams, transfers, transfer_rumours, sidelined</td><td>Squads per season, coaching spells, transfers, injuries and suspensions.</td></tr>
+<tr><td>football: fixtures</td><td>fixtures</td><td>One row per match. home_team_id / away_team_id are kept in sync with participants by trigger.</td></tr>
+<tr><td>football: inside a fixture</td><td>fixture_participants, _scores, _periods, _events, _lineups, _lineup_details, _statistics, _formations, _officials, _coaches, _tv_stations, _sidelined, _weather, _trends, _pressure, _ball_coordinates, _xg, _xg_players, _expected_lineups, _commentaries, _match_facts, _news, _news_lines; metadata</td><td>Everything that happens in or around a match: teams, scores, events, lineups, player and team stats, officials, xG, momentum, weather and commentary.</td></tr>
+<tr><td>football: standings</td><td>standings, standing_details, standing_form, topscorers</td><td>League tables with detail rows and form, plus goal / assist / card leaders.</td></tr>
+<tr><td>football: season stats</td><td>season_statistics; team_, player_, coach_, referee_season_stats and their _details tables</td><td>Season-level aggregates. Each parent row is one entity in one season, with one detail row per stat type.</td></tr>
+<tr><td>football: predictions</td><td>predictions, live_predictions, league_probabilities</td><td>Sportmonks pre-match and in-play predictions and league predictability.</td></tr>
+<tr><td>odds</td><td>bookmakers, markets, prematch_odds, inplay_odds, premium_odds, premium_odds_history</td><td>Bookmaker prices per fixture and market, with full opening-to-closing history for premium odds.</td></tr>
+<tr><td>analysis</td><td>finished_states, main_referee, fixture_overview, referee_season_summary (views); team_match_stats, player_match_stats, referee_match_discipline (materialized)</td><td>Ready-to-query layer for the referee analysis. Refresh with <code>analysis.refresh_all()</code> after each load.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="card">
+<h2>Keys and automation</h2>
+<div class="scroll"><table>
+<thead><tr><th>Mechanism</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td>Enforced foreign keys</td><td>Competition structure (seasons, stages, rounds, groups, aggregates to leagues/seasons), fixtures to leagues/seasons, every fixture child to fixtures, detail tables to their parents, and odds to fixtures. Deferrable, checked at COMMIT, ON DELETE CASCADE.</td></tr>
+<tr><td>Indexed, not enforced</td><td>References to people, teams, venues, geography, types and sub-structures, which Sportmonks may mention before they are downloaded. <code>raw.missing_references()</code> reports the gaps.</td></tr>
+<tr><td>trg_fixture_context</td><td>On every table with fixture_id, league_id and season_id: copies league and season from the fixture on insert. Insert the fixture first (same transaction is fine).</td></tr>
+<tr><td>trg_sync_home_away</td><td>On fixture_participants: keeps fixtures.home_team_id and away_team_id in step with the participant's location.</td></tr>
+<tr><td>Generated columns</td><td>value = core.jnum(data) on stat tables; decimal_odds and probability_pct = core.num(...) on odds tables.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="card">
+<h2>Analysis layer dependencies</h2>
+<div class="scroll"><table>
+<thead><tr><th>Object</th><th>Built from</th><th>Grain</th></tr></thead>
+<tbody>
+<tr><td>fixture_overview (view)</td><td>fixtures, leagues, seasons, stages, rounds, states, teams, venues, main_referee, fixture_scores</td><td>One row per match</td></tr>
+<tr><td>team_match_stats (MV)</td><td>fixtures, fixture_participants, fixture_scores, fixture_statistics, fixture_events, fixture_xg</td><td>One row per team per match</td></tr>
+<tr><td>player_match_stats (MV)</td><td>fixture_lineups, fixture_lineup_details, fixture_events, fixture_xg_players</td><td>One row per player per match</td></tr>
+<tr><td>referee_match_discipline (MV)</td><td>fixtures, main_referee, team_match_stats, finished_states</td><td>One row per finished match</td></tr>
+<tr><td>referee_season_summary (view)</td><td>referee_match_discipline, referees, leagues, seasons</td><td>One row per referee per league-season, with indexes vs league average</td></tr>
+</tbody></table></div>
+<p class="note" style="margin-top:14px">Refresh order (<code>analysis.refresh_all</code>): team_match_stats, then player_match_stats, then referee_match_discipline.</p>
+</section>
+<p class="note">Source: schema.sql</p>
+<a class="pdf-link" href="pdf/football-database-architecture.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download the original PDF</a>
+</article>
+
+</div></div>
+</body></html>

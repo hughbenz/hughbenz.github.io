@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prospective Projects</title>
+<link rel="stylesheet" href="../assets/glass.css">
+<link rel="stylesheet" href="../assets/docs.css">
+</head><body>
+<script src="../assets/site.js" data-root="../" data-page="prospective-projects" data-nav="{&quot;mode&quot;: &quot;sections&quot;, &quot;sel&quot;: &quot;.doc &gt; section&quot;, &quot;overview&quot;: &quot;.fa-main&quot;}"></script>
+<div class="fa-shell"><div class="fa-side" id="fa-side" role="navigation" aria-label="On this page"></div><div class="fa-main">
+<article class="doc">
+<header class="doc-head">
+<h1>Prospective Projects</h1>
+<p class="subtitle">Planned data science projects in sports analytics</p>
+</header>
+
+<section class="card proj" data-fa-label="xG model for goal kicking">
+<h2>1. Expected Goals (xG) Model for Goal Kicking</h2>
+<p class="meta">Sport: <span>NRL</span></p>
+<h3>Aim</h3>
+<p>The aim of this project is to build an expected goals (xG) metric for kicks taken off the tee in the NRL, namely conversion attempts and penalty goals. The model would estimate the probability that a given kick is successful based on the conditions under which it is taken.</p>
+<h3>Workflow</h3>
+<p>The first step is to establish whether an existing database already records the location from which each kick is taken. Each kick would then be matched by date and time against historical weather records so that wind speed and direction at the moment of the kick can be included. Each kick would also be annotated with the kicker's preferred foot, since this determines which side of the field favours them.</p>
+<p>These sources would be combined into a single database recording every kick alongside whether it was successful. A regression model, such as logistic regression, would then be fitted to estimate a global xG for kicks across the competition, with more advanced methods explored if they offer a meaningful improvement. Player-specific models could also be built where useful, although the limited number of kicks per player means these are likely to be unreliable on their own.</p>
+<h3>Ease of Deployment</h3>
+<p>This project should be relatively easy and inexpensive to deliver. The only inputs required are the position of each kick, the kicker's footedness, and the wind speed and direction at the time. This data could be collected first-hand or obtained through the NRL, and if neither route proves fruitful, kick positions could be extracted from match footage using computer vision.</p>
+<h3>Application</h3>
+<p>Teams lose several games each season purely through missed kicks, scoring as many or more tries than their opponents but losing on conversion rate. This is often because a kicker has a weakness on one side of the field. An xG model would expose these weaknesses and allow teams to rotate kicking duties between players so that each kick is taken by the player with the highest expected success from that position. Over a season, this could plausibly be worth an extra two, four or even six points.</p>
+</section>
+
+<section class="card proj" data-fa-label="Player sentiment and motivation">
+<h2>2. Non-Contact Measurement of Player Sentiment and Motivation</h2>
+<p class="meta">Sport: <span>AFL and/or NRL</span></p>
+<h3>Aim</h3>
+<p>The aim of this project is to quantify players' internal sentiment and motivation during a match without any direct interaction with them, using only what can be observed from the outside.</p>
+<h3>Workflow</h3>
+<p>The core of the project would be computer vision models trained to read player posture, building on landmark studies of tennis players' body language that showed genuine predictive promise. Where the project is applied to one's own team, biometric data could be added to strengthen the signal.</p>
+<p>Beyond posture, the models would be trained to detect the more obvious signs of a poor mental state or of a player mentally giving up. These include arms hanging by the side or thrown up in the air, walking in situations where the player would previously have been pressing, visible anger towards teammates, failing to track back after losing the ball, ball-watching rather than scanning, a decline in sprint gait, an increase in turnovers, and reduced communication with teammates.</p>
+<h3>Ease of Deployment</h3>
+<p>This project is substantially harder to deliver than the first. It would require significant compute, data access is likely to be costly, and wide-angle footage that captures every player across the ground would be necessary, since standard broadcast footage follows the ball and misses much of the relevant behaviour.</p>
+<h3>Application</h3>
+<p>The most direct application is live prediction of match outcomes. Player morale is a large variable that has until now only been adjusted for manually, and this would finally allow it to be priced in systematically.</p>
+<p>On the field, coaches could identify an opposition player who has become demoralised and target them in real time. The same models could be run during warm-ups to give an early indication of the fitness and attitude of players on both their own team and the opposition.</p>
+<p>Finally, simultaneous monitoring of every player across the ground could flag players in visible distress early. This would help clubs avoid damaging reputational incidents, such as the widely reported incident involving Elijah Hollands in the AFL.</p>
+</section>
+<a class="pdf-link" href="pdf/prospective-projects.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download the original PDF</a>
+</article>
+
+</div></div>
+</body></html>
